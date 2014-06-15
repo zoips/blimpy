@@ -14,5 +14,8 @@ deps:
 clean:
 	rm $(current_dir)/bin/blimpy
 
+fmt:
+	GOPATH=$(current_dir) go fmt blimpy
+
 init:
 	GOPATH=$(current_dir)/_vendor go get github.com/mattn/gom
