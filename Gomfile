@@ -1,0 +1,1 @@
+gom 'github.com/mxk/go-sqlite/sqlite3', :commit => '167da9432e1f4602e95ea67b67051cfa34412e3f'
