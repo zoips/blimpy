@@ -1,14 +1,14 @@
 current_dir := $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-gopath := $(current_dir)/src:$(current_dir)/_vendor
+gopath := $(current_dir)/../../../:$(current_dir)/_vendor
 
 .PHONY: all build deps clean init
 
 all: init deps build
 
 build:
-	GOPATH=$(gopath) go build -o $(current_dir)/bin/blimpy $(current_dir)/src/main.go
+	GOPATH=$(gopath) go build -o $(current_dir)/bin/blimpy $(current_dir)/server/main.go
 
-deps:
+deps: init
 	GOPATH=$(current_dir)/_vendor $(current_dir)/_vendor/bin/gom install
 
 clean:

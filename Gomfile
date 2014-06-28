@@ -1,2 +1,2 @@
-gom 'github.com/mxk/go-sqlite/sqlite3', :commit => '167da9432e1f4602e95ea67b67051cfa34412e3f'
+gom 'github.com/mattn/go-sqlite3'
 gom 'github.com/coopernurse/gorp', :tag => 'v1.6.1'
