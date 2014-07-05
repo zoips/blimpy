@@ -13,6 +13,7 @@ import (
 
 const (
 	dirNames = "abcdefghijklmnopqrstuvwxyz0123456789"
+	fileDatabaseName = "blimpy_files.sqlite3"
 )
 
 type FileManager interface {
@@ -52,7 +53,7 @@ func (self *FSFileManager) SetRoot(root string) error {
 		}
 	}
 
-	db, err := sql.Open("sqlite3", filepath.Join(root, "blimpy_files.sqlite3"))
+	db, err := sql.Open("sqlite3", filepath.Join(root, fileDatabaseName))
 	if err != nil {
 		return err
 	}
