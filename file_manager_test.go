@@ -124,3 +124,52 @@ func TestFSFileManagerInsertFile(t *testing.T) {
 		}
 	}
 }
+
+func TestFSFileManagerGetFile(t *testing.T) {
+	root, _ := ioutil.TempDir("", "fm-test")
+	fm, _ := NewFSFileManager(root)
+
+	defer os.RemoveAll(root)
+
+	for i := 0; i < 10; i++ {
+		fd, _ := ioutil.TempFile("", "fm-test-file")
+		data := fmt.Sprintf("test file %d", i)
+
+		fd.Write([]byte(data))
+		fd.Seek(0, 0)
+
+		file := File{
+			Name:        "foo",
+			Description: "bar",
+			MimeType:    "test/foo",
+		}
+
+		err := fm.InsertFile(&file, fd)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		file2, err := fm.GetFile(file.Id)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if file2 == nil {
+			t.Fatal("Expected file")
+		}
+
+		err = file2.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		data2, err := ioutil.ReadAll(file2)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if string(data2) != data {
+			t.Fatalf("Expected %s == %s", data, data2)
+		}
+	}
+}

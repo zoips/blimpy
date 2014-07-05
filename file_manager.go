@@ -16,10 +16,14 @@ const (
 	fileDatabaseName = "blimpy_files.sqlite3"
 )
 
+func makeFilePath(root, id string) string {
+	return filepath.Join(root, id[0:1], id[1:2], id)
+}
+
 type FileManager interface {
 	GetRoot() string
 	SetRoot(root string) error
-	GetFile(id string) *File
+	GetFile(id string) (*File, error)
 	DeleteFile(id string) error
 	InsertFile(file *File) error
 	UpdateFile(file *File) error
@@ -111,7 +115,7 @@ func (self *FSFileManager) InsertFile(file *File, fd *os.File) error {
 	}
 
 	file.Id = hex.EncodeToString(hash.Sum(nil))
-	file.path = filepath.Join(self.root, file.Id[0:1], file.Id[1:2], file.Id)
+	file.path = makeFilePath(self.root, file.Id)
 
 	err = file.Open()
 	if err != nil {
@@ -128,8 +132,21 @@ func (self *FSFileManager) InsertFile(file *File, fd *os.File) error {
 	return self.dbMap.Insert(file)
 }
 
-func (self *FSFileManager) GetFile(id string) *File {
-	return nil
+func (self *FSFileManager) GetFile(id string) (*File, error) {
+	var file File
+
+	err := self.dbMap.SelectOne(&file, "select * from files where id = ?", id)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		} else {
+			return nil, err
+		}
+	}
+
+	file.path = makeFilePath(self.root, id)
+
+	return &file, nil
 }
 
 func (self *FSFileManager) UpdateFile(file *File) error {
