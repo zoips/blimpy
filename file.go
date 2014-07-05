@@ -5,12 +5,12 @@ import (
 )
 
 type File struct {
-	path        string
-	file        *os.File
-	Id          string `db:"id"`
-	Name        string `db:"name"`
-	Description string `db:"description"`
-	MimeType    string `db:"mime_type"`
+	path        string   `db:"-"`
+	file        *os.File `db:"-"`
+	Id          string   `db:"id"`
+	Name        string   `db:"name"`
+	Description string   `db:"description"`
+	MimeType    string   `db:"mime_type"`
 }
 
 func (self *File) Open() error {

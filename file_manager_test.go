@@ -1,10 +1,11 @@
 package blimpy
 
 import (
-	"testing"
-	"os"
+	"fmt"
 	"io/ioutil"
+	"os"
 	"path/filepath"
+	"testing"
 )
 
 func TestFSFileManagerEnsureDirectory(t *testing.T) {
@@ -71,6 +72,55 @@ func TestFSFileManagerSetRoot(t *testing.T) {
 
 		if !rows.Next() {
 			t.Fatalf("Expected table %s", table)
+		}
+	}
+}
+
+func TestFSFileManagerInsertFile(t *testing.T) {
+	root, _ := ioutil.TempDir("", "fm-test")
+	fm, _ := NewFSFileManager(root)
+
+	defer os.RemoveAll(root)
+
+	for i := 0; i < 10; i++ {
+		fd, _ := ioutil.TempFile("", "fm-test-file")
+		data := fmt.Sprintf("test file %d", i)
+
+		fd.Write([]byte(data))
+		fd.Seek(0, 0)
+
+		file := File{
+			Name:        "foo",
+			Description: "bar",
+			MimeType:    "test/foo",
+		}
+
+		err := fm.InsertFile(&file, fd)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if file.Id == "" {
+			t.Fatal("Expected an id")
+		}
+
+		_, err = os.Stat(filepath.Join(root, file.Id[0:1], file.Id[1:2], file.Id))
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		err = file.Open()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		data2, err := ioutil.ReadAll(&file)
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		if string(data2) != data {
+			t.Fatalf("Expected %s == %s", data, data2)
 		}
 	}
 }

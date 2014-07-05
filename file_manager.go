@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	dirNames = "abcdefghijklmnopqrstuvwxyz0123456789"
+	dirNames         = "abcdefghijklmnopqrstuvwxyz0123456789"
 	fileDatabaseName = "blimpy_files.sqlite3"
 )
 
@@ -111,7 +111,7 @@ func (self *FSFileManager) InsertFile(file *File, fd *os.File) error {
 	}
 
 	file.Id = hex.EncodeToString(hash.Sum(nil))
-	file.path = filepath.Join(self.root, file.Id[0:1], file.Id[1:2])
+	file.path = filepath.Join(self.root, file.Id[0:1], file.Id[1:2], file.Id)
 
 	err = file.Open()
 	if err != nil {
