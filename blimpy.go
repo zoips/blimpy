@@ -6,8 +6,8 @@ import (
 )
 
 type Config struct {
-	DataDir     string `json:"DataDir"`
-	ApiPort     int    `json:"apiPort"`
+	DataDir string `json:"dataDir"`
+	ApiPort int    `json:"apiPort"`
 }
 
 type Blimpy struct {
