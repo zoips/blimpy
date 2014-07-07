@@ -4,11 +4,13 @@ import (
 	"crypto/sha512"
 	"database/sql"
 	"encoding/hex"
+	"errors"
 	"github.com/coopernurse/gorp"
 	_ "github.com/mattn/go-sqlite3"
 	"io"
 	"os"
 	"path/filepath"
+	"syscall"
 )
 
 const (
@@ -150,9 +152,17 @@ func (self *FSFileManager) GetFile(id string) (*File, error) {
 }
 
 func (self *FSFileManager) UpdateFile(file *File) error {
-	return nil
+	return errors.New("not implemented")
 }
 
 func (self *FSFileManager) DeleteFile(id string) error {
-	return nil
+	_, err := self.dbMap.Exec("delete from files where id = ?", id)
+	if err != nil {
+		return err
+	}
+
+	err = syscall.Unlink(makeFilePath(self.root, id))
+	if err != nil {
+		return err
+	}
 }
